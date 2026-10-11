@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROMA F3 | Romavfx01 - Portafolio Cinematográfico</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #050508;
+            --card-bg: rgba(14, 14, 22, 0.75);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #e63946;
+            --accent: #ff0055;
+            --text-main: #f8f9fa;
+            --text-muted: #94a3b8;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(230, 57, 70, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* --- FONDO DEGRADADO ANIMADO --- */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(circle at 10% 20%, rgba(230, 57, 70, 0.15) 0%, transparent 45%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.1) 0%, transparent 45%),
+                        radial-gradient(circle at 50% 50%, rgba(15, 15, 30, 0.5) 0%, transparent 100%);
+        }
+
+        /* --- NAVEGACIÓN Y MENÚ --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(5, 5, 8, 0.85);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(230, 57, 70, 0.5));
+            transition: var(--transition);
+        }
+
+        .brand-container:hover .brand-logo {
+            transform: scale(1.08) rotate(-4deg);
+        }
+
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffffff 40%, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            z-index: 1001;
+        }
+
+        .hamburger {
+            width: 28px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background-color: var(--text-main);
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .menu-btn.active .hamburger span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+            background-color: var(--primary);
+        }
+        .menu-btn.active .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-btn.active .hamburger span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+            background-color: var(--primary);
+        }
+
+        /* Overlay Menú Pantalla Completa */
+        .overlay-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 5, 8, 0.98);
+            backdrop-filter: blur(30px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 999;
+        }
+
+        .overlay-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .overlay-nav ul {
+            list-style: none;
+            text-align: center;
+        }
+
+        .overlay-nav li {
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .overlay-nav a {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            display: inline-block;
+            transition: var(--transition);
+            transform: translateY(80px);
+            opacity: 0;
+        }
+
+        .overlay-menu.open .overlay-nav a {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .overlay-menu.open .overlay-nav li:nth-child(1) a { transition-delay: 0.1s; }
+        .overlay-menu.open .overlay-nav li:nth-child(2) a { transition-delay: 0.2s; }
+        .overlay-menu.open .overlay-nav li:nth-child(3) a { transition-delay: 0.3s; }
+        .overlay-menu.open .overlay-nav li:nth-child(4) a { transition-delay: 0.4s; }
+
+        .overlay-nav a:hover {
+            color: #fff;
+            text-shadow: 0 0 30px var(--primary);
+            transform: scale(1.08);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 1.5rem;
+            position: relative;
+        }
+
+        .hero-badge {
+            background: rgba(230, 57, 70, 0.12);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 0.8s ease forwards;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 7vw, 6rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            animation: fadeInDown 1s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            max-width: 650px;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+            line-height: 1.6;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            color: var(--text-muted);
+            animation: bounce 2s infinite;
+            font-size: 1.2rem;
+        }
+
+        /* --- SECCIÓN EXPERIENCIA / SOBRE MÍ --- */
+        .experience-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 5%;
+        }
+
+        .exp-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 3.5rem;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .exp-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+
+        .exp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .exp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .exp-title-box h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .exp-title-box h2 span {
+            color: var(--primary);
+        }
+
+        .exp-title-box .handle {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .exp-desc p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- SECCIÓN DE VÍDEOS / PORTAFOLIO --- */
+        .portfolio-section {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 3rem 5% 6rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.4rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        .grid-videos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(230, 57, 70, 0.6);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7),
+                        0 0 30px rgba(230, 57, 70, 0.25);
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            background: #000;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .video-card:hover .video-wrapper video {
+            transform: scale(1.03);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .play-btn-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(230, 57, 70, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.4rem;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(230, 57, 70, 0.6);
+            transition: var(--transition);
+        }
+
+        .video-wrapper:hover .play-btn-icon {
+            transform: scale(1.15);
+            background: var(--primary);
+        }
+
+        .video-wrapper.playing .play-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .card-content {
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            background: rgba(12, 12, 18, 0.85);
+        }
+
+        .card-info h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .card-info span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .ig-link {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .ig-link:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 3.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            background: rgba(4, 4, 6, 0.9);
+        }
+
+        footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <!-- HEADER CON LOGO Y MENÚ -->
+    <header>
+        <a href="#inicio" class="brand-container">
+            <img src="logo.jpeg" alt="ROMA F3 Logo" class="brand-logo" onerror="this.style.display='none'">
+            <span class="logo-text">ROMA F3</span>
+        </a>
+
+        <button class="menu-btn" id="menuBtn">
+            <span>Menú</span>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+    </header>
+
+    <!-- MENÚ OVERLAY -->
+    <div class="overlay-menu" id="overlayMenu">
+        <nav class="overlay-nav">
+            <ul>
+                <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                <li><a href="#experiencia" class="nav-link">Experiencia</a></li>
+                <li><a href="#portafolio" class="nav-link">Portafolio</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="inicio">
+        <div class="hero-badge">Creador Audiovisual & Editor</div>
+        <h1>ROMA F3</h1>
+        <p>Transformo ideas en experiencias audiovisuales únicas mediante edición de alto impacto, técnica impecable y creatividad sin límites.</p>
+        <div class="scroll-down">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- SECCIÓN EXPERIENCIA / SOBRE MÍ -->
+    <section class="experience-section" id="experiencia">
+        <div class="exp-container">
+            <div class="exp-grid">
+                <div class="exp-title-box">
+                    <span class="handle">@romavfx01</span>
+                    <h2>Sobre Mi <span>Trayectoria</span></h2>
+                </div>
+                <div class="exp-desc">
+                    <p>Soy <strong>Romavfx01</strong>, editor de video y creador audiovisual con <strong>6 años de experiencia</strong>. Me especializo en crear contenido visual dinámico y atractivo, combinando creatividad, técnica y atención al detalle para transformar ideas en experiencias audiovisuales únicas.</p>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">6+</div>
+                            <div class="stat-label">Años de Experiencia</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Alto Impacto Visual</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE VÍDEOS / PORTAFOLIO -->
+    <main class="portfolio-section" id="portafolio">
+        <h2 class="section-title"><span>//</span> Trabajos Destacados</h2>
+        
+        <div class="grid-videos">
+            
+            <!-- Reel 1 -->
+            <article class="video-card">
+                <div class="video-wrapper">
+                    <video preload="metadata" loop muted playsinline>
+                        <source src="video1.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <div class="play-btn-icon"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Reel #1</h3>
+                        <span>Clickee el video para ver</span>
+                    </div>
+                    <a href="https://www.instagram.com/reel/DduY7T5R2jN/?utm_source=ig_web_copy_link&vrfl=NTc4MTIwNjQ2YQ==" target="_blank" class="ig-link" title="Ver en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </article>
+
+            <!-- Reel 2 -->
+            <article class="video-card">
+                <div class="video-wrapper">
+                    <video preload="metadata" loop muted playsinline>
+                        <source src="video2.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <div class="play-btn-icon"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Reel #2</h3>
+                        <span>Clickee el video para ver</span>
+                    </div>
+                    <a href="https://www.instagram.com/reel/DZb9rmDxagX/?xtok=cmE2OTRuems3OHdt" target="_blank" class="ig-link" title="Ver en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </article>
+
+            <!-- Reel 3 -->
+            <article class="video-card">
+                <div class="video-wrapper">
+                    <video preload="metadata" loop muted playsinline>
+                        <source src="video3.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <div class="play-btn-icon"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Reel #3</h3>
+                        <span>Clickee el video para ver</span>
+                    </div>
+                    <a href="https://www.instagram.com/reel/DOWDhyLjoYj/" target="_blank" class="ig-link" title="Ver en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </article>
+
+            <!-- Reel 4 -->
+            <article class="video-card">
+                <div class="video-wrapper">
+                    <video preload="metadata" loop muted playsinline>
+                        <source src="video4.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <div class="play-btn-icon"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Reel #4</h3>
+                        <span>Clickee el video para ver</span>
+                    </div>
+                    <a href="https://www.instagram.com/reel/DCDNqlytc4U/?srtk=dnAyM3VzNjh2cHY4" target="_blank" class="ig-link" title="Ver en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </article>
+
+            <!-- Reel 5 -->
+            <article class="video-card">
+                <div class="video-wrapper">
+                    <video preload="metadata" loop muted playsinline>
+                        <source src="video5.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <div class="play-btn-icon"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Reel #5</h3>
+                        <span>Clickee el video para ver</span>
+                    </div>
+                    <a href="https://www.instagram.com/reel/DcZzD0sRVXJ/?utm_source=ig_web_copy_link&srtk=NTc4MTIwNjQ2YQ==" target="_blank" class="ig-link" title="Ver en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </article>
+
+            <!-- Reel 6 -->
+            <article class="video-card">
+                <div class="video-wrapper">
+                    <video preload="metadata" loop muted playsinline>
+                        <source src="video6.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <div class="play-btn-icon"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-info">
+                        <h3>Reel #6</h3>
+                        <span>Clickee el video para ver</span>
+                    </div>
+                    <a href="https://www.instagram.com/reel/DWumre5EYdV/?utm_source=ig_web_copy_link&rpxt=NTc4MTIwNjQ2YQ==" target="_blank" class="ig-link" title="Ver en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contacto">
+        <p>&copy; 2026 <span>ROMA F3 (Romavfx01)</span>. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Lógica del Menú
+        const menuBtn = document.getElementById('menuBtn');
+        const overlayMenu = document.getElementById('overlayMenu');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            overlayMenu.classList.toggle('open');
+            document.body.style.overflow = overlayMenu.classList.contains('open') ? 'hidden' : 'auto';
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                overlayMenu.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // Reproducción de vídeo interactiva al hacer clic en cada tarjeta
+        const videoWrappers = document.querySelectorAll('.video-wrapper');
+
+        videoWrappers.forEach(wrapper => {
+            const video = wrapper.querySelector('video');
+
+            wrapper.addEventListener('click', () => {
+                if (video.paused) {
+                    // Pausar los demás vídeos activos
+                    document.querySelectorAll('video').forEach(v => {
+                        if (v !== video) {
+                            v.pause();
+                            v.parentElement.classList.remove('playing');
+                        }
+                    });
+
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            wrapper.classList.add('playing');
+                        }).catch(error => {
+                            console.log("Reproducción bloqueada o interrumpida:", error);
+                            wrapper.classList.remove('playing');
+                        });
+                    }
+                } else {
+                    video.pause();
+                    wrapper.classList.remove('playing');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
